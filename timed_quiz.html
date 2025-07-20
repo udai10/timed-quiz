@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timed Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    #timer {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      background: #f00;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+    #quiz, #results {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<h1>My Timed Quiz</h1>
+
+<div id="timer"></div>
+
+<div id="quiz">
+  <form id="quizForm">
+    <div class="question">
+      <label>1. What is 2 + 2?</label><br>
+      <input type="radio" name="q1" value="4">4<br>
+      <input type="radio" name="q1" value="5">5<br>
+    </div>
+    <div class="question">
+      <label>2. What is capital of France?</label><br>
+      <input type="radio" name="q2" value="Paris">Paris<br>
+      <input type="radio" name="q2" value="London">London<br>
+    </div>
+    <div class="question">
+      <label>3. What color is the sky?</label><br>
+      <input type="radio" name="q3" value="Blue">Blue<br>
+      <input type="radio" name="q3" value="Green">Green<br>
+    </div>
+
+    <button type="button" onclick="submitQuiz()">Submit</button>
+  </form>
+</div>
+
+<div id="results"></div>
+
+<script>
+  const questionCount = 3;
+  const timePerQuestion = 60; // seconds
+  let timeLeft = questionCount * timePerQuestion;
+
+  const timerEl = document.getElementById("timer");
+  const quizEl = document.getElementById("quiz");
+  const resultsEl = document.getElementById("results");
+
+  function startQuiz() {
+    quizEl.style.display = "block";
+    updateTimer();
+  }
+
+  function updateTimer() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    timerEl.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    if (timeLeft <= 0) {
+      submitQuiz();
+    } else {
+      timeLeft--;
+      setTimeout(updateTimer, 1000);
+    }
+  }
+
+  function submitQuiz() {
+    document.getElementById("quizForm").style.display = "none";
+    quizEl.style.display = "none";
+    timerEl.style.display = "none";
+
+    const answers = {
+      q1: "4",
+      q2: "Paris",
+      q3: "Blue"
+    };
+
+    const form = document.getElementById("quizForm");
+    let score = 0;
+    for (let q in answers) {
+      const selected = form[q]?.value;
+      if (selected === answers[q]) {
+        score++;
+      }
+    }
+
+    resultsEl.style.display = "block";
+    resultsEl.innerHTML = `<h2>Time's up! Your score: ${score} out of ${questionCount}</h2>`;
+  }
+
+  // Start quiz on page load
+  window.onload = startQuiz;
+</script>
+
+</body>
+</html>
